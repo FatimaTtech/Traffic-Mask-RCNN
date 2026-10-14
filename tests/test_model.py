@@ -195,3 +195,32 @@ def test_api_predict_missing_input(client):
     resp = client.post("/api/predict", data={})
     assert resp.status_code == 400
     assert "error" in resp.get_json()
+
+
+def test_vercel_entrypoint():
+    """Verify api/index.py imports cleanly and exports the Flask app."""
+    import api.index as vercel_entry
+    assert hasattr(vercel_entry, "app")
+    assert vercel_entry.app is not None
+
+
+def test_api_predict_remote_backend_unreachable(client, monkeypatch):
+    """Verify that an unreachable INFERENCE_BACKEND_URL returns a clear error rather than fake data."""
+    import app as app_module
+    monkeypatch.setattr(app_module, "INFERENCE_BACKEND_URL", "http://127.0.0.1:59999")
+
+    img_byte_arr = io.BytesIO()
+    test_img = Image.new("RGB", (100, 100), color=(50, 100, 150))
+    test_img.save(img_byte_arr, format="JPEG")
+    img_byte_arr.seek(0)
+
+    resp = client.post("/api/predict", data={
+        "image": (img_byte_arr, "test.jpg"),
+        "confidence": "0.5"
+    }, content_type="multipart/form-data")
+
+    assert resp.status_code == 502
+    data = resp.get_json()
+    assert "error" in data
+    assert "Failed to communicate with remote inference backend" in data["error"]
+
