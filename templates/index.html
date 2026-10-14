@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Mask R-CNN | Object Detection & Instance Segmentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polygon points="12 8 8 12 12 16 16 12 12 8"></polygon>
+                        <line x1="12" y1="2" x2="12" y2="4"></line>
+                        <line x1="12" y1="20" x2="12" y2="22"></line>
+                    </svg>
+                </div>
+                <div>
+                    <h1>Traffic Mask R-CNN</h1>
+                    <p class="subtitle">Instance Segmentation & Object Detection for Traffic Scenes</p>
+                </div>
+            </div>
+
+            <div class="header-status" id="modelStatusBadge">
+                <span class="status-dot pulsing"></span>
+                <div class="status-info">
+                    <span class="model-name">ResNet-50-FPN</span>
+                    <span class="model-details" id="modelStatusDetails">Loading model status...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Notification Banner -->
+        <div id="alertBanner" class="alert-banner hidden">
+            <span id="alertMessage"></span>
+            <button type="button" class="alert-close" onclick="dismissAlert()">&times;</button>
+        </div>
+
+        <!-- Main Workspace Grid -->
+        <main class="workspace-grid">
+            <!-- Left Sidebar / Control Panel -->
+            <aside class="control-panel">
+                <!-- Upload Card -->
+                <div class="card panel-card">
+                    <div class="card-header">
+                        <h2>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            Input Image
+                        </h2>
+                    </div>
+
+                    <!-- Drag & Drop Zone -->
+                    <div class="upload-dropzone" id="dropZone">
+                        <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.webp,.bmp" class="file-input-hidden">
+                        <div class="dropzone-content">
+                            <div class="upload-icon-circle">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+                                    <path d="M12 12v9"></path>
+                                    <path d="m16 16-4-4-4 4"></path>
+                                </svg>
+                            </div>
+                            <p class="dropzone-title">Click to upload or drag & drop</p>
+                            <p class="dropzone-sub">PNG, JPG, JPEG, WEBP (Max 16 MB)</p>
+                            <span id="selectedFileName" class="selected-file-name hidden"></span>
+                        </div>
+                    </div>
+
+                    <!-- Quick-Select Sample Images -->
+                    <div class="samples-wrapper">
+                        <span class="samples-label">Or choose a pre-loaded sample:</span>
+                        <div class="sample-chips" id="sampleChips">
+                            <button type="button" class="sample-btn" data-sample="sample_traffic_1.jpg">
+                                <span class="sample-dot"></span> Sample 1: Bicycle Scene
+                            </button>
+                            <button type="button" class="sample-btn" data-sample="sample_traffic_2.jpg">
+                                <span class="sample-dot"></span> Sample 2: Urban Traffic
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detection Settings Card -->
+                <div class="card panel-card">
+                    <div class="card-header">
+                        <h2>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                            Detection Controls
+                        </h2>
+                    </div>
+
+                    <!-- Confidence Slider -->
+                    <div class="control-group">
+                        <div class="control-label-row">
+                            <label for="confidenceSlider">Confidence Threshold</label>
+                            <span class="control-value-badge" id="confidenceValue">0.50</span>
+                        </div>
+                        <input type="range" id="confidenceSlider" min="0.05" max="0.95" step="0.05" value="0.50" class="styled-range">
+                        <div class="range-labels">
+                            <span>0.05 (More Detections)</span>
+                            <span>0.95 (High Precision)</span>
+                        </div>
+                    </div>
+
+                    <!-- Mask Opacity Slider -->
+                    <div class="control-group">
+                        <div class="control-label-row">
+                            <label for="opacitySlider">Mask Transparency</label>
+                            <span class="control-value-badge" id="opacityValue">45%</span>
+                        </div>
+                        <input type="range" id="opacitySlider" min="0" max="100" step="5" value="45" class="styled-range">
+                        <div class="range-labels">
+                            <span>0% (Transparent)</span>
+                            <span>100% (Solid)</span>
+                        </div>
+                    </div>
+
+                    <!-- Visual Layer Toggles -->
+                    <div class="control-group">
+                        <label class="section-sublabel">Layer Overlays</label>
+                        <div class="toggles-list">
+                            <label class="toggle-item">
+                                <input type="checkbox" id="toggleMasks" checked>
+                                <span class="toggle-slider"></span>
+                                <span class="toggle-text">Segmentation Masks</span>
+                            </label>
+                            <label class="toggle-item">
+                                <input type="checkbox" id="toggleBoxes" checked>
+                                <span class="toggle-slider"></span>
+                                <span class="toggle-text">Bounding Boxes</span>
+                            </label>
+                            <label class="toggle-item">
+                                <input type="checkbox" id="toggleLabels" checked>
+                                <span class="toggle-slider"></span>
+                                <span class="toggle-text">Class Labels & Scores</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Target Categories Legend -->
+                    <div class="control-group">
+                        <label class="section-sublabel">Model Traffic Classes (8)</label>
+                        <div class="class-legend-grid" id="classLegend">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Primary Action Button -->
+                    <button type="button" id="detectBtn" class="btn-primary" disabled>
+                        <span class="btn-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                            </svg>
+                        </span>
+                        <span id="btnText">Run Mask R-CNN Detection</span>
+                        <div class="spinner hidden" id="btnSpinner"></div>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Right Workspace: Visualizations & Metrics -->
+            <section class="results-viewport">
+                <!-- Welcome / Empty State Placeholder -->
+                <div class="card empty-state" id="emptyState">
+                    <div class="empty-icon-wrap">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                    </div>
+                    <h3>No Image Evaluated Yet</h3>
+                    <p>Upload a traffic photo from your computer or pick one of the sample scenes on the left to see the fine-tuned Mask R-CNN model predict instance masks, bounding boxes, and object labels.</p>
+                </div>
+
+                <!-- Active Results Container -->
+                <div class="results-container hidden" id="resultsContainer">
+                    <!-- Metrics Bar -->
+                    <div class="metrics-bar">
+                        <div class="metric-card">
+                            <span class="metric-title">Objects Detected</span>
+                            <span class="metric-val" id="metricTotalDetections">0</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-title">Inference Time</span>
+                            <span class="metric-val" id="metricInferenceTime">0 ms</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-title">Resolution</span>
+                            <span class="metric-val" id="metricResolution">0 × 0</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-title">Source</span>
+                            <span class="metric-val metric-text" id="metricSource">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Category Count Chips -->
+                    <div class="class-pills-row" id="classPillsRow">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Side-by-Side Image Comparison Cards -->
+                    <div class="viewer-grid">
+                        <!-- Original Image -->
+                        <div class="card viewer-card">
+                            <div class="card-header viewer-header">
+                                <h3>
+                                    <span class="badge-tag">Original</span>
+                                    Input Image
+                                </h3>
+                            </div>
+                            <div class="image-stage">
+                                <img id="originalImagePreview" src="" alt="Original Traffic Image">
+                            </div>
+                        </div>
+
+                        <!-- Annotated Segmentation Prediction -->
+                        <div class="card viewer-card">
+                            <div class="card-header viewer-header">
+                                <h3>
+                                    <span class="badge-tag prediction-tag">Prediction</span>
+                                    Segmented Traffic Objects
+                                </h3>
+                                <a id="downloadAnnotatedBtn" href="#" download="traffic_maskrcnn_prediction.jpg" class="download-btn" title="Download annotated image">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                    Save Image
+                                </a>
+                            </div>
+                            <div class="image-stage">
+                                <img id="annotatedImagePreview" src="" alt="Mask R-CNN Prediction">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detections Breakdown Table Card -->
+                    <div class="card panel-card table-card">
+                        <div class="card-header">
+                            <h2>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                                </svg>
+                                Detection List & Coordinates
+                            </h2>
+                            <span class="table-count" id="tableItemCount">0 items</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table" id="detectionsTable">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Class</th>
+                                        <th>Confidence</th>
+                                        <th>Bounding Box [xmin, ymin, xmax, ymax]</th>
+                                        <th>Box Area</th>
+                                        <th>Mask Pixels</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detectionsTableBody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Traffic Mask R-CNN System &bull; ResNet-50-FPN Backbone &bull; PyTorch & Torchvision Detection Engine</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
