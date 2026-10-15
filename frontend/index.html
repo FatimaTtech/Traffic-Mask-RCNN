@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#172554">
+
+  <title>Traffic Mask R-CNN | AI Detection</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f6fc;
+      color: #172554;
+    }
+
+    header {
+      background: linear-gradient(135deg, #172554, #334e91);
+      color: white;
+      text-align: center;
+      padding: 32px 18px;
+    }
+
+    header h1 {
+      margin: 0 0 12px;
+      font-size: clamp(26px, 4vw, 38px);
+    }
+
+    header p {
+      margin: 0;
+      color: #dbeafe;
+      line-height: 1.6;
+    }
+
+    main {
+      max-width: 1250px;
+      margin: 30px auto;
+      padding: 0 18px;
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .intro h2 {
+      margin-bottom: 10px;
+    }
+
+    .intro p {
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    .app-container {
+      background: white;
+      border: 1px solid #dbe3f0;
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: 0 8px 28px rgba(23, 37, 84, 0.08);
+    }
+
+    iframe {
+      display: block;
+      width: 100%;
+      height: 850px;
+      border: none;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .open-link {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 12px 20px;
+      background: #263f7a;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .open-link:hover {
+      background: #172554;
+    }
+
+    .note {
+      text-align: center;
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 20px 0;
+    }
+
+    footer {
+      padding: 22px;
+      text-align: center;
+      background: #e8edf7;
+      color: #475569;
+      font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 25px 15px;
+      }
+
+      main {
+        padding: 0 10px;
+        margin: 20px auto;
+      }
+
+      .app-container {
+        padding: 5px;
+      }
+
+      iframe {
+        height: 760px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Traffic Mask R-CNN</h1>
+    <p>AI-Powered Traffic Detection and Instance Segmentation</p>
+  </header>
+
+  <main>
+    <section class="intro">
+      <h2>Analyze Traffic Images</h2>
+      <p>
+        Upload a traffic image to explore object detection
+        and segmentation using the Mask R-CNN model.
+      </p>
+    </section>
+
+    <section class="app-container">
+      <iframe
+        src="https://fatimatahseen-traffic-maskrcnn-api.hf.space"
+        title="Traffic Mask R-CNN Application"
+        loading="eager"
+        allow="clipboard-read; clipboard-write"
+        referrerpolicy="strict-origin-when-cross-origin">
+      </iframe>
+    </section>
+
+    <p class="note">
+      The model runs on Hugging Face Spaces.
+      If the application does not appear below, open it directly.
+      <br>
+      <a
+        class="open-link"
+        href="https://fatimatahseen-traffic-maskrcnn-api.hf.space"
+        target="_blank"
+        rel="noopener noreferrer">
+        Open Detection App
+      </a>
+    </p>
+  </main>
+
+  <footer>
+    Traffic Mask R-CNN · AI-Based Traffic Detection
+  </footer>
+</body>
+</html>
